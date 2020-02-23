@@ -62,7 +62,7 @@
     "i18n-react": "^0.6.4",
     "moment": "^2.21.0",
     "react": "16.4.2",
-    "react-apollo": "^2.1.9",
+    "react-apollo": "^2.5.8",
     "react-datepicker": "^1.4.1",
     "react-dom": "16.4.2",
     "react-transition-group": "^2.4.0",
