@@ -42,7 +42,7 @@
   "dependencies": {
     "@types/react-transition-group": "^2.0.14",
     "add-graphql-subscriptions": "^1.0.1",
-    "apollo-cache-inmemory": "^1.1.5",
+    "apollo-cache-inmemory": "^1.6.5",
     "apollo-client": "^2.3.7",
     "apollo-link": "^1.0.7",
     "apollo-link-context": "^1.0.3",
