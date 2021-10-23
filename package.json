@@ -68,7 +68,7 @@
     "react-transition-group": "^2.4.0",
     "striptags": "^3.0.1",
     "subscriptions-transport-ws": "^0.9.14",
-    "xss": "^1.0.3"
+    "xss": "^1.0.10"
   },
   "devDependencies": {
     "@release-it/conventional-changelog": "^1.1.0",
