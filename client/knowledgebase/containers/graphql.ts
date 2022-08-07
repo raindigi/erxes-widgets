@@ -1,14 +1,6 @@
-const kbLoaderQuery = `
-  query knowledgeBaseLoader($topicId: String!) {
-    knowledgeBaseLoader(topicId: $topicId) {
-      loadType
-    }
-  }
-`;
-
 const kbSearchArticlesQuery = `
-  query knowledgeBaseArticles($topicId: String!, $searchString: String!) {
-    knowledgeBaseArticles(topicId: $topicId, searchString: $searchString) {
+  query widgetsKnowledgeBaseArticles($topicId: String!, $searchString: String!) {
+    widgetsKnowledgeBaseArticles(topicId: $topicId, searchString: $searchString) {
       _id
       title
       summary
@@ -17,7 +9,7 @@ const kbSearchArticlesQuery = `
       createdDate
       modifiedBy
       modifiedDate
-      author {
+      createdUser {
         details {
           fullName
           avatar
@@ -28,8 +20,8 @@ const kbSearchArticlesQuery = `
 `;
 
 const getKbCategoryQuery = `
-  query knowledgeBaseCategoriesDetail($categoryId: String!) {
-    knowledgeBaseCategoriesDetail(categoryId: $categoryId) {
+  query knowledgeBaseCategoryDetail($_id: String!) {
+    knowledgeBaseCategoryDetail(_id: $_id) {
       _id
       title
       description
@@ -46,11 +38,12 @@ const getKbCategoryQuery = `
         title
         summary
         content
+        reactionChoices
         createdBy
         createdDate
         modifiedBy
         modifiedDate
-        author {
+        createdUser {
           details {
             fullName
             avatar
@@ -62,11 +55,12 @@ const getKbCategoryQuery = `
 `;
 
 const getKbTopicQuery = `
-  query knowledgeBaseTopicsDetail($topicId: String!) {
-    knowledgeBaseTopicsDetail(topicId: $topicId) {
+  query knowledgeBaseTopicDetail($_id: String!) {
+    knowledgeBaseTopicDetail(_id: $_id) {
       title
       description
       color
+      backgroundImage
       languageCode
       categories {
         _id
@@ -85,9 +79,15 @@ const getKbTopicQuery = `
   }
 `;
 
+const incReactionCount = `
+  mutation knowledgebaseIncReactionCount($articleId: String! $reactionChoice: String!) {
+    knowledgebaseIncReactionCount(articleId: $articleId, reactionChoice: $reactionChoice)
+  }
+`;
+
 export default {
-  kbLoaderQuery,
   kbSearchArticlesQuery,
   getKbCategoryQuery,
+  incReactionCount,
   getKbTopicQuery
 };

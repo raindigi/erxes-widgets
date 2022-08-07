@@ -1,7 +1,7 @@
 import * as React from "react";
 import {
   increaseViewCount,
-  saveForm,
+  saveLead,
   sendEmail
 } from "../../../form/containers/utils";
 import {
@@ -16,6 +16,7 @@ import { connection } from "../../connection";
 interface IState {
   currentStatus: ICurrentStatus;
   isCallOutVisible: boolean;
+  isSubmitting?: boolean;
 }
 
 interface IStore extends IState {
@@ -41,10 +42,6 @@ export class LeadProvider extends React.Component<{}, IState> {
     };
   }
 
-  // componentDidMount() {
-  //   this.increaseViewCount();
-  // }
-
   /*
    * Increasing view count
    */
@@ -57,7 +54,9 @@ export class LeadProvider extends React.Component<{}, IState> {
    * Save user submissions
    */
   save = (doc: IFormDoc) => {
-    saveForm({
+    this.setState({ isSubmitting: true });
+
+    saveLead({
       doc,
       browserInfo: connection.browserInfo,
       integrationId: this.getIntegration()._id,
@@ -66,6 +65,7 @@ export class LeadProvider extends React.Component<{}, IState> {
         const { status, errors } = response;
 
         this.setState({
+          isSubmitting: false,
           currentStatus: {
             status: status === "ok" ? "SUCCESS" : "ERROR",
             errors
@@ -83,11 +83,11 @@ export class LeadProvider extends React.Component<{}, IState> {
   };
 
   getIntegration = () => {
-    return connection.formData.integration;
+    return connection.leadData.integration;
   };
 
   getForm = () => {
-    return connection.formData.form;
+    return connection.leadData.form;
   };
 
   showForm = () => {

@@ -1,7 +1,6 @@
 import T from "i18n-react";
 import * as moment from "moment";
 import "moment/locale/mn";
-import translation from "../locales";
 import { ENV, IBrowserInfo, IRule } from "./types";
 
 export const getBrowserInfo = async () => {
@@ -87,8 +86,12 @@ export const setMomentLocale = (code: string) => {
 };
 
 export const setLocale = (code?: string) => {
-  T.setTexts(translation[code || "en"]);
-  setMomentLocale(code || "en");
+  import(`../locales/${code}.json`)
+    .then(translations => {
+      T.setTexts(translations);
+      setMomentLocale(code || "en");
+    })
+    .catch(e => console.log(e)); // tslint:disable-line
 };
 
 export const __ = (msg: string) => {
@@ -174,13 +177,13 @@ const isValidURL = (url: string) => {
  * @return {String} - URL
  */
 export const readFile = (value: string): string => {
-  const { MAIN_API_URL } = getEnv();
+  const { API_URL } = getEnv();
 
   if (!value || isValidURL(value) || value.includes("/")) {
     return value;
   }
 
-  return `${MAIN_API_URL}/read-file?key=${value}`;
+  return `${API_URL}/read-file?key=${value}`;
 };
 
 export const checkRule = async (rule: IRule, browserInfo: IBrowserInfo) => {
@@ -285,3 +288,16 @@ export const checkRules = async (
 
   return passedAllRules;
 };
+
+export const striptags = (htmlString: string) => {
+  const _div = document.createElement("div");
+  let _text = "";
+
+  _div.innerHTML = htmlString;
+  _text = _div.textContent ? _div.textContent.trim() : "";
+  _text = _text.replace(/\</g, "&lt;").replace(/\>/g, "&gt;");
+  return _text;
+};
+
+export const fixErrorMessage = (msg: string) =>
+  msg.replace("GraphQL error: ", "");

@@ -24,6 +24,7 @@ widgetConnect({
         brandCode: setting.brand_id,
         email: setting.email,
         phone: setting.phone,
+        code: setting.code,
 
         cachedCustomerId: getLocalStorageItem("customerId"),
 
@@ -37,8 +38,8 @@ widgetConnect({
     });
   },
 
-  connectCallback: (data: { messengerConnect: IConnectResponse }) => {
-    const messengerData = data.messengerConnect;
+  connectCallback: (data: { widgetsMessengerConnect: IConnectResponse }) => {
+    const messengerData = data.widgetsMessengerConnect;
 
     if (!messengerData.integrationId) {
       throw new Error("Integration not found");

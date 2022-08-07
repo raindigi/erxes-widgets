@@ -1,15 +1,17 @@
 import * as React from "react";
-import { IEmailParams, IIntegration, IIntegrationFormData } from "../../types";
+import { IEmailParams, IIntegration, IIntegrationLeadData } from "../../types";
 import { checkRules } from "../../utils";
 import { connection } from "../connection";
 import { ICurrentStatus, IForm, IFormDoc, ISaveFormResponse } from "../types";
-import { increaseViewCount, postMessage, saveForm, sendEmail } from "./utils";
+import { increaseViewCount, postMessage, saveLead, sendEmail } from "./utils";
 
 interface IState {
   isPopupVisible: boolean;
   isFormVisible: boolean;
   isCalloutVisible: boolean;
   currentStatus: ICurrentStatus;
+  isSubmitting?: boolean;
+  callSubmit: boolean;
 }
 
 interface IStore extends IState {
@@ -22,9 +24,10 @@ interface IStore extends IState {
   createNew: () => void;
   sendEmail: (params: IEmailParams) => void;
   setHeight: () => void;
+  setCallSubmit: (state: boolean) => void;
   getIntegration: () => IIntegration;
   getForm: () => IForm;
-  getIntegrationConfigs: () => IIntegrationFormData;
+  getIntegrationConfigs: () => IIntegrationLeadData;
 }
 
 const AppContext = React.createContext({} as IStore);
@@ -39,7 +42,8 @@ export class AppProvider extends React.Component<{}, IState> {
       isPopupVisible: false,
       isFormVisible: false,
       isCalloutVisible: false,
-      currentStatus: { status: "INITIAL" }
+      currentStatus: { status: "INITIAL" },
+      callSubmit: false
     };
   }
 
@@ -48,14 +52,13 @@ export class AppProvider extends React.Component<{}, IState> {
    */
   init = async () => {
     const { data, browserInfo, hasPopupHandlers } = connection;
-    const { integration, form } = data;
+    const { integration } = data;
 
     if (!browserInfo) {
       return;
     }
 
-    const { callout, rules } = form;
-    const { loadType } = integration.formData;
+    const { loadType, callout, rules } = integration.leadData;
 
     // check rules ======
     const isPassedAllRules = await checkRules(rules, browserInfo);
@@ -119,7 +122,7 @@ export class AppProvider extends React.Component<{}, IState> {
   showPopup = () => {
     const { data } = connection;
     const { integration } = data;
-    const { callout } = integration.formData;
+    const { callout } = integration.leadData;
 
     this.setState({ isPopupVisible: true });
 
@@ -153,7 +156,9 @@ export class AppProvider extends React.Component<{}, IState> {
    * Save user submissions
    */
   save = (doc: IFormDoc) => {
-    saveForm({
+    this.setState({ isSubmitting: true });
+
+    saveLead({
       doc,
       browserInfo: connection.browserInfo,
       integrationId: this.getIntegration()._id,
@@ -162,6 +167,8 @@ export class AppProvider extends React.Component<{}, IState> {
         const { status, errors } = response;
 
         this.setState({
+          callSubmit: false,
+          isSubmitting: false,
           currentStatus: {
             status: status === "ok" ? "SUCCESS" : "ERROR",
             errors
@@ -170,6 +177,11 @@ export class AppProvider extends React.Component<{}, IState> {
       }
     });
   };
+
+  setCallSubmit = (state: boolean) => {
+    this.setState({ callSubmit: state });
+  };
+
   /*
    * Redisplay form component after submission
    */
@@ -201,7 +213,7 @@ export class AppProvider extends React.Component<{}, IState> {
   };
 
   getIntegrationConfigs = () => {
-    return this.getIntegration().formData;
+    return this.getIntegration().leadData;
   };
 
   render() {
@@ -218,6 +230,7 @@ export class AppProvider extends React.Component<{}, IState> {
           createNew: this.createNew,
           sendEmail,
           setHeight: this.setHeight,
+          setCallSubmit: this.setCallSubmit,
           getIntegration: this.getIntegration,
           getForm: this.getForm,
           getIntegrationConfigs: this.getIntegrationConfigs

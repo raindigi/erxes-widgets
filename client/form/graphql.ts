@@ -1,16 +1,14 @@
-export const formQuery = `
-  query form($formId: String) {
-    form(formId: $formId) {
+export const formDetailQuery = `
+  query formDetail($_id: String!) {
+    formDetail(_id: $_id) {
       title
       description
       buttonText
-      themeColor
+
       fields {
         _id
-        formId
         name
         type
-        check
         text
         description
         options
@@ -22,36 +20,26 @@ export const formQuery = `
   }
 `;
 
-export const connectMutation = `
-  mutation formConnect($brandCode: String!, $formCode: String!) {
-    formConnect(brandCode: $brandCode, formCode: $formCode) {
+export const formConnectMutation = `
+  mutation widgetsLeadConnect($brandCode: String!, $formCode: String!) {
+    widgetsLeadConnect(brandCode: $brandCode, formCode: $formCode) {
       form {
         _id
         title
         description
-        themeColor
-        callout
-        rules {
-          _id
-          kind
-          text
-          condition
-          value
-        }
       }
       integration {
         _id
         name
-        languageCode
-        formData
+        leadData
       }
     }
   }
 `;
 
 export const saveFormMutation = `
-  mutation saveForm($integrationId: String!, $formId: String!, $submissions: [FieldValueInput], $browserInfo: JSON!) {
-    saveForm(integrationId: $integrationId, formId: $formId, submissions: $submissions, browserInfo: $browserInfo) {
+  mutation widgetsSaveLead($integrationId: String!, $formId: String!, $submissions: [FieldValueInput], $browserInfo: JSON!) {
+    widgetsSaveLead(integrationId: $integrationId, formId: $formId, submissions: $submissions, browserInfo: $browserInfo) {
       status
       messageId
       errors {
@@ -70,7 +58,7 @@ export const sendEmailMutation = `
 `;
 
 export const increaseViewCountMutation = `
-  mutation formIncreaseViewCount($formId: String!) {
-    formIncreaseViewCount(formId: $formId)
+  mutation widgetsLeadIncreaseViewCount($formId: String!) {
+    widgetsLeadIncreaseViewCount(formId: $formId)
   }
 `;

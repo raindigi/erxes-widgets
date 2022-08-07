@@ -21,17 +21,11 @@ app.use("/build", express.static(path.join(__dirname, "../static")));
 app.use("/static", express.static("public"));
 
 const getEnv = () => {
-  const {
-    ROOT_URL,
-    MAIN_API_URL,
-    API_GRAPHQL_URL,
-    API_SUBSCRIPTIONS_URL
-  } = process.env;
+  const { ROOT_URL, API_URL, API_SUBSCRIPTIONS_URL } = process.env;
 
   return JSON.stringify({
     ROOT_URL,
-    MAIN_API_URL,
-    API_GRAPHQL_URL,
+    API_URL,
     API_SUBSCRIPTIONS_URL
   });
 };
@@ -46,7 +40,11 @@ app.get("/form", (req, res) => {
 });
 
 app.get("/knowledgebase", (req, res) => {
-  res.render("widget", { type: "knowledgebase", env: getEnv() });
+  res.render("widget", {
+    type: "knowledgebase",
+    env: getEnv(),
+    kbTopicId: req.query.topicId
+  });
 });
 
 app.get("/test", (req, res) => {

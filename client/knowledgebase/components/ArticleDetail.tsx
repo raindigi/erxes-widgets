@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import * as moment from "moment";
 import * as React from "react";
 import { defaultAvatar } from "../../icons/Icons";
@@ -8,10 +9,69 @@ import { BackButton } from "./";
 type Props = {
   article: IKbArticle | null;
   goToArticles: () => void;
+  incReactionCount: (articleId: string, reactionChoice: string) => void;
 };
-export default class ArticleDetail extends React.PureComponent<Props> {
+export default class ArticleDetail extends React.PureComponent<
+  Props,
+  { activeReaction: string }
+> {
+  constructor(props: Props) {
+    super(props);
+
+    this.state = {
+      activeReaction: ""
+    };
+  }
+
   componentDidMount() {
     makeClickableLink(".erxes-article-content a");
+  }
+
+  onReactionClick = (articleId: string, reactionChoice: string) => {
+    const { incReactionCount } = this.props;
+
+    this.setState({ activeReaction: reactionChoice });
+
+    incReactionCount(articleId, reactionChoice);
+  };
+
+  renderReactions() {
+    const { article } = this.props;
+
+    if (
+      !article ||
+      (article.reactionChoices && article.reactionChoices.length === 0)
+    ) {
+      return null;
+    }
+
+    const reactionClassess = classNames("reactions", {
+      clicked: this.state.activeReaction
+    });
+
+    return (
+      <div className="feedback">
+        <div className={reactionClassess}>
+          {(article.reactionChoices || []).map((reactionChoice, index) => (
+            <span
+              key={index}
+              className={
+                reactionChoice === this.state.activeReaction
+                  ? "active"
+                  : undefined
+              }
+              onClick={this.onReactionClick.bind(
+                this,
+                article._id,
+                reactionChoice
+              )}
+            >
+              <img src={reactionChoice} />
+            </span>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   render() {
@@ -22,7 +82,7 @@ export default class ArticleDetail extends React.PureComponent<Props> {
     }
 
     const {
-      author,
+      createdUser,
       modifiedDate,
       createdDate,
       title,
@@ -30,7 +90,7 @@ export default class ArticleDetail extends React.PureComponent<Props> {
       content
     } = article;
 
-    const authorDetails = author.details || {
+    const authorDetails = createdUser.details || {
       fullName: "",
       avatar: defaultAvatar
     };
@@ -69,6 +129,8 @@ export default class ArticleDetail extends React.PureComponent<Props> {
             <p>{summary}</p>
             <p dangerouslySetInnerHTML={{ __html: content }} />
           </div>
+
+          {this.renderReactions()}
         </div>
       </div>
     );

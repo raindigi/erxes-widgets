@@ -1,6 +1,7 @@
+import { ICallout } from "./form/types";
+
 export type ENV = {
-  MAIN_API_URL: string;
-  API_GRAPHQL_URL: string;
+  API_URL: string;
   API_SUBSCRIPTIONS_URL: string;
 };
 
@@ -99,6 +100,7 @@ export interface IIntegrationMessengerData {
   notifyCustomer: boolean;
   knowledgeBaseTopicId: string;
   formCode: string;
+  websiteAppData?: { [key: string]: string };
   availabilityMethod: string;
   isOnline: boolean;
   requireAuth: boolean;
@@ -111,7 +113,7 @@ export interface IIntegrationMessengerData {
   links?: IIntegrationLink;
 }
 
-export interface IIntegrationFormData {
+export interface IIntegrationLeadData {
   loadType: string;
   successAction?: string;
   fromEmail?: string;
@@ -122,6 +124,9 @@ export interface IIntegrationFormData {
   adminEmailContent?: string;
   thankContent?: string;
   redirectUrl?: string;
+  themeColor?: string;
+  callout?: ICallout;
+  rules?: IRule;
 }
 
 export interface IIntegrationUiOptions {
@@ -138,38 +143,12 @@ export interface IIntegration {
   languageCode?: string;
   tagIds?: string[];
   formId: string;
-  formData: IIntegrationFormData;
+  leadData: IIntegrationLeadData;
   messengerData: IIntegrationMessengerData;
   twitterData: IIntegrationTwitterData;
   facebookData: IIntegrationFacebookData;
   uiOptions: IIntegrationUiOptions;
 }
-
-export interface IDealProductInput {
-  productName: string;
-  uom: string;
-  currency: string;
-  quantity: number;
-  unitPrice: number;
-  taxPercent?: number;
-  tax?: number;
-  discountPercent?: number;
-  discount?: number;
-  amount?: number;
-}
-
-export interface IDealInput {
-  name: string;
-  boardName: string;
-  pipelineName: string;
-  stageName: string;
-  userEmail: string;
-  companyIds?: string[];
-  customerEmail?: string;
-  description?: string;
-  productsData: IDealProductInput;
-}
-
 export interface IRule {
   _id: string;
   kind?: string;
